@@ -47,6 +47,12 @@ struct ChessBoardView: View {
                     loadFen()
             }
             }
+            ZStack{
+                Text("Press")
+                    .onTapGesture {
+                        print("PRESS")
+                    }
+            }
         }
         .frame(width: 200)
     }

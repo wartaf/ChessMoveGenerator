@@ -8,64 +8,89 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var ret: [Int] = [Int]()
-    @State private var txt: String = ""
-    @State private var list: [ChessMoveGenerator.Move] = []
     
-
-    var game: ChessMoveGenerator = ChessMoveGenerator()//(fen: "rnb1k2r/pppp1ppp/7n/1q2p3/1b2P3/5N1Q/PPPP1PPP/RNB1K2R w KQkq - 0 8")
-    var ai: ChessAI = ChessAI()
+    @State private var isDrag = false
+    @State private var highlightOffset: [Int] = []
+    @State private var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    @State private var gameOver = false
+    
+    var game = ChessMoveGenerator()
+    var ai = ChessAI()
+        
     var body: some View {
-        VStack {
-            ChessBoardView()
-            
-            
-            ForEach(list, id: \.SAN) { m in
-                Text("\(m.pieceType.type.rawValue) \(game.algebraic(i: m.moveTo)) \(m.pieceType.color.rawValue) \(m.SAN)")
-                    .onTapGesture {
-                        game.makeMove(move: ChessMoveGenerator.Move(moveFrom: m.moveFrom, moveTo: m.moveTo, pieceType: m.pieceType, flag: m.flag, promotion: m.promotion, captured: m.captured))
-                        battleAI()
-                        print(game.boardToASCII())
-                        list = game.generateMoves()
+        ZStack {
+            VStack {
+                ZStack {
+                    BoardView()
+                    PiecesView (fen: $fen, highlightOffsets: $highlightOffset) { status in
+                        switch status {
+                        case .drag(let from):
+                            isDrag(from: from)
+                        case .drop(let from, let to):
+                            isDrop(from: from, to: to)
+                        }
                     }
-            }
-            TextField("Move", text: $txt)
-
-            Button("ListMove"){
-                let moves = game.generateMoves()
-                moves.forEach { move in
-                    print(move.moveFrom, move.moveTo, move.pieceType.type.rawValue, move.pieceType.color.rawValue, move.flag, move.promotion?.rawValue, move.captured?.rawValue, game.algebraic(i: move.moveTo))
                 }
-                print(moves.count)
+                Button("AI"){
+                    if let move = ai.getBestMove(game: game) {
+                        game.makeMove(move: move)
+                        fen = game.generateFen()
+                    } else {
+                        print("GameOver")
+                    }
+                }
             }
-            Button("ASCII"){
-                print(game.boardToASCII())
+            .onAppear{
+                game.clear()
+                game.load(fen: fen)
             }
-
-            Button("FEN"){
-                print(game.generateFen())
+            if gameOver {
+                Rectangle()
+                    .fill(.white.opacity(0.1))
+                Text("Game Over")
             }
-            Button("BattleAI"){
-                battleAI()
-            }
-            
-        }
-        .onAppear{
-            //ai.gameInstance = game
-            list = game.generateMoves()
-            print(game.generateFen())
-            print(game.boardToASCII())
         }
     }
     
-    func battleAI(){
-        let bestMove = ai.getBestMove(game: game)
-        game.makeMove(move: bestMove)
-        print(game.boardToASCII())
-        print("move: ", bestMove.SAN)
-        list = game.generateMoves()
+    func isDrag(from: Int) {
+        let moves = game.generateMoves(SquareOffset: from)
+        moves.forEach { m in
+            highlightOffset.append(m.moveTo)
+        }
     }
-
+    
+    func isDrop(from: Int, to: Int) {
+        if game.gameOver() {
+            print("gameover")
+            gameOver = true
+            return
+        }
+        let moves = game.generateMoves(SquareOffset: from)
+        var move: ChessMoveGenerator.Move? = nil
+        moves.forEach { m in
+            if m.moveTo == to {
+                move = m
+            }
+        }
+        
+        if let m = move {
+            game.makeMove(move: m)
+        } else {
+            return
+        }
+        
+        fen = game.generateFen()
+        
+        if let aimove = ai.getBestMove(game: game) {
+            game.makeMove(move: aimove)
+            fen = game.generateFen()
+            
+        }
+        
+        if game.gameOver() {
+            gameOver = true
+        }
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {

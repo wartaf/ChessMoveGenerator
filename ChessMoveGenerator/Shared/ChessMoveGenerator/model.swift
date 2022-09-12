@@ -8,10 +8,14 @@
 import Foundation
 
 extension ChessMoveGenerator{
-    struct ChessPiece: Identifiable {
-        let id = UUID()
+    struct ChessPiece: Equatable {//: Identifiable {
+        //let id = UUID()
         let type: PieceType
         let color: PieceColor
+        
+        static func == (lhs: ChessPiece, rhs: ChessPiece) -> Bool {
+            return lhs.type.rawValue == rhs.type.rawValue && lhs.color.rawValue == rhs.color.rawValue
+        }
     }
     
     enum PieceType: String{

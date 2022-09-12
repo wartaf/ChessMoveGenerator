@@ -78,7 +78,7 @@ extension ChessMoveGenerator {
         var i = algebraicToOffset(pgn: "a8")
         let h1 = algebraicToOffset(pgn: "h1")
         while i <= h1 {
-            defer {i += 1 }
+            defer { i += 1 }
             sqColor = (sqColor + 1) % 2
             if i & 0x88 != 0 { i += 7; continue }
             
@@ -95,9 +95,9 @@ extension ChessMoveGenerator {
             
         if numPieces == 2 {
             return true
-        } else if numPieces == 3 && (pieces[.Bishop]! == 1 || pieces[.Knight]! == 1) {
+        } else if numPieces == 3 && ((pieces[.Bishop] ?? 0) == 1 || pieces[.Knight]! == 1) {
             return true
-        } else if numPieces == pieces[.Bishop]! + 2 {
+        } else if numPieces == (pieces[.Bishop] ?? 0) + 2 {
             var sum = 0
             let len = bishops.count
             for j in 0..<len {
@@ -118,10 +118,10 @@ extension ChessMoveGenerator {
          * avoiding the costly that we do below.
          */
         
-        //var moves: [Move] = []
-        //var positions = []
-        //var repetition = false
-        /*
+        var moves: [Move] = []
+        var positions: [String: Int] = [:]
+        var repetition = false
+        
         while true {
             if let move = undoMove() {
                 moves.append(move)
@@ -129,13 +129,24 @@ extension ChessMoveGenerator {
                 break
             }
         }
-        */
-        //while true {
+        
+        while true {
             /* remove the last two fields in the FEN string, they're not needed
               * when checking for draw by rep */
+            let fen = String(generateFen().split(separator: " ")[0..<4].joined(separator: " "))
             
+            /* has the position occurred three or move times */
+            positions[fen] = positions.contains(where: { k,v in k == fen }) ? (positions[fen]!) + 1 : 1
             
-        //}
-        return false
+            if positions[fen]! >= 3 {
+                repetition = true
+            }
+            
+            if moves.count == 0 {
+                break
+            }
+            makeMove(move: moves.popLast()!) // UnHandled error / no Pre-moves
+        }
+        return repetition
     }
 }

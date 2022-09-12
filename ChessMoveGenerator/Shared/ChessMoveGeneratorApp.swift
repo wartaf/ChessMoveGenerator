@@ -11,11 +11,11 @@ import SwiftUI
 struct ChessMoveGeneratorApp: App {
     var body: some Scene {
         WindowGroup {
-            //ContentView()
+            ContentView()
             //ChessBoardView()
             //TESTING()
             //HoverBoard()
-            BoardView()
+            //PiecesView()
         }
     }
 }

@@ -27,7 +27,7 @@ extension ChessMoveGenerator {
                 square += 1
             }
         }
-        
+
         /* Active Color who's to turn */
         activeColor = PieceColor(rawValue: String(tokens[1]))!
         
@@ -56,7 +56,7 @@ extension ChessMoveGenerator {
     }
     
     func clear() {
-        board = Array<ChessPiece?>(repeating: nil, count: 128)
+        board = Array<ChessPiece?>(repeating: nil, count: 144)
         kingsPosition = [.white: -1, .black: -1]
         activeColor = .white;
         castlingRights = [.white: 0, .black: 0]

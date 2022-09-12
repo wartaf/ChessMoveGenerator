@@ -78,7 +78,7 @@ struct HoverBoard: View {
         }
         
         let bestMove = ai.getBestMove(game: game)
-        game.makeMove(move: bestMove)
+        //game.makeMove(move: bestMove)
         activeOffset = nil
         availableMoves = []
     }
