@@ -8,7 +8,6 @@
 import SwiftUI
 import Chess
 
-
 struct GameBoardView: View {
     
    // @State private var isDrag = false
