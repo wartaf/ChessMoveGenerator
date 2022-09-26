@@ -12,10 +12,6 @@ struct ChessMoveGeneratorApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-            //ChessBoardView()
-            //TESTING()
-            //HoverBoard()
-            //PiecesView()
         }
     }
 }
