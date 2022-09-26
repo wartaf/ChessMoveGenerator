@@ -1,9 +1,9 @@
 //
 //  ContentView.swift
 //  Chess
-//  edition
+//
 //  Created by Harry Pantaleon on 9/14/22.
-//  sampling
+//
 
 import SwiftUI
 
