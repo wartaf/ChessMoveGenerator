@@ -1,18 +1,19 @@
 //
 //  minimax.swift
-//  ChessMoveGenerator
+//  Chess
 //
 //  Created by Harry Pantaleon on 8/14/22.
 //
 
 import Foundation
+import Chess
 
 extension ChessAI {
     
-    func minimaxRootW(depth: Int, game: ChessMoveGenerator, isMaximisingPlayer: Bool) -> ChessMoveGenerator.Move? {
+    func minimaxRootW(depth: Int, game: Chess, isMaximisingPlayer: Bool) -> Chess.Move? {
         let newGameMoves = game.generateMoves()
         var bestMove = -9999.0
-        var bestMoveFound: ChessMoveGenerator.Move? = nil
+        var bestMoveFound: Chess.Move? = nil
 
         for move in newGameMoves {
             game.makeMove(move: move)
@@ -29,10 +30,10 @@ extension ChessAI {
         return bestMoveFound
     }
     
-    func minimaxRootB (depth: Int, game: ChessMoveGenerator, isMaximisingPlayer: Bool) -> ChessMoveGenerator.Move? {
+    func minimaxRootB (depth: Int, game: Chess, isMaximisingPlayer: Bool) -> Chess.Move? {
         let newGameMoves = game.generateMoves()
         var bestMove = 9999.0
-        var bestMoveFound: ChessMoveGenerator.Move? = nil
+        var bestMoveFound: Chess.Move? = nil
 
         for move in newGameMoves {
             game.makeMove(move: move)
@@ -49,17 +50,11 @@ extension ChessAI {
         return bestMoveFound
     }
     
-    func minimax(depth: Int, game: ChessMoveGenerator, alpha: Double, beta: Double, isMaximisingPlayer: Bool) -> Double {
+    func minimax(depth: Int, game: Chess, alpha: Double, beta: Double, isMaximisingPlayer: Bool) -> Double {
         positionCount += 1
         if depth == 0 {
             let eval = evaluateBoard(board: game.board)
-            //print(isMaximisingPlayer ? "-" : "+", game.activeColor)
             return -eval
-            //return isMaximisingPlayer ? -eval : eval
-            //return game.activeColor == .white ? -evaluateBoard(board: game.board) : evaluateBoard(board: game.board)
-            
-            //return isMaximisingPlayer ? -eval : eval
-            //return -eval
         }
         
         let newGameMoves = game.generateMoves()

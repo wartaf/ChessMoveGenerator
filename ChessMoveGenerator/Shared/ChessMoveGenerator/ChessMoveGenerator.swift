@@ -45,7 +45,7 @@ class ChessMoveGenerator{
     let defaultPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     
     init (fen: String){
-        board = Array<ChessPiece?>(repeating: nil, count: 144)
+        board = Array<ChessPiece?>(repeating: nil, count: 128)
         activeColor = .white
         self.load(fen: fen == "" ? self.defaultPosition : fen)
     }

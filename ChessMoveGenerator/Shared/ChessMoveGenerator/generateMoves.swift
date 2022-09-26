@@ -75,12 +75,15 @@ extension ChessMoveGenerator {
             
             if piece?.type == .Pawn {
                 /* 1 square move non-capture */
-                let square = i + pawnOffset[us]![0]
+                var square = i + pawnOffset[us]![0]
+                if square < 0 || square > 120 { square = 121 } // if square outOfRange, point it to always nil index
+                
                 if board[square] == nil {
                     add_move(from: i, to: square, flags: BITS.NORMAL.rawValue)
                     
                     /* if 1st square is open, check 2nd square*/
-                    let square = i + pawnOffset[us]![1]
+                    var square = i + pawnOffset[us]![1]
+                    if square < 0 || square > 120 { square = 121 } // if square outOfRange, point it to always nil index
                     
                     if board[square] == nil {
                         if board[i]?.color == .white && getRank(i) == .rank2 {
@@ -93,7 +96,9 @@ extension ChessMoveGenerator {
                 
                 /* Pawn Capture */
                 for j in 2...3 {
-                    let square = i + pawnOffset[us]![j]
+                    var square = i + pawnOffset[us]![j]
+                    if square < 0 || square > 120 { square = 121 } // if square outOfRange, point it to always nil index
+                    
                     if square & 0x88 != 0 { continue }
                     
                     if board[square] != nil && board[square]?.color == opponentColor {

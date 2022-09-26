@@ -1,16 +1,14 @@
 //
 //  ChessAI.swift
-//  ChessMoveGenerator
+//  Chess
 //
 //  Created by Harry Pantaleon on 8/13/22.
 //
 
 import Foundation
+import Chess
 
 class ChessAI {
-    //var board: [ChessMoveGenerator.ChessPiece?]
-    //var gameInstance: ChessMoveGenerator
-    
     var pawnEvalWhite: [[Double]]
     var knightEval: [[Double]]
     var bishopEvalWhite: [[Double]]
@@ -26,7 +24,6 @@ class ChessAI {
     var positionCount: Int = 0
     
     init(){
-        print("ChessAI INIT Start...")
         
         kingEvalWhite = [
             [ -3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
@@ -110,7 +107,7 @@ class ChessAI {
         return Int(rank | file)
     }
     
-    func evaluateBoard(board: [ChessMoveGenerator.ChessPiece?]) -> Double {
+    func evaluateBoard(board: [Chess.ChessPiece?]) -> Double {
         var totalEvaluation = 0.0
         
         var i = algebraicToOffset(pgn: "a8")
@@ -125,11 +122,11 @@ class ChessAI {
         return totalEvaluation
     }
     
-    func getPieceValue(_ piece: ChessMoveGenerator.ChessPiece?, offset: Int) -> Double {
+    func getPieceValue(_ piece: Chess.ChessPiece?, offset: Int) -> Double {
         guard let piece = piece else {
             return 0
         }
-        func getAbsoluteValue (_ piece: ChessMoveGenerator.ChessPiece, x: Int, y: Int) -> Double {
+        func getAbsoluteValue (_ piece: Chess.ChessPiece, x: Int, y: Int) -> Double {
         
             switch piece.type {
             case .Pawn:
@@ -153,26 +150,26 @@ class ChessAI {
         return piece.color == .white ? absoluteValue : -absoluteValue
     }
     
-    func getBestMove(game: ChessMoveGenerator) -> ChessMoveGenerator.Move? {
+    func getBestMove(game: Chess) -> Chess.Move? {
         if game.gameOver() {
             print("GAMEOVER")
         }
 
         positionCount = 0
         let depth = 3 // GET DEPTH
-        let d1 = Date().timeIntervalSince1970
+        //let d1 = Date().timeIntervalSince1970
         let bestMove = game.activeColor == .white ? minimaxRootB(depth: depth, game: game, isMaximisingPlayer: true) : minimaxRootW(depth: depth, game: game, isMaximisingPlayer: true)
-        let d2 = Date().timeIntervalSince1970
-        let moveTime = (d2 - d1)
+        //let d2 = Date().timeIntervalSince1970
+        //let moveTime = (d2 - d1)
         
-        print("movetime:", moveTime)
+        //print("movetime:", moveTime)
         
         //print("Start:", d1, "Finished:", Date.now.timeIntervalSince1970, "active: ", game.activeColor)
         //let d2 = Date()
         //let moveTime = d2.timeIntervalSinceReferenceDate - d.timeIntervalSinceReferenceDate
         //var positionPerS = positionCount * 1000 / moveTime
         
-        print("POSITION COUNT: ", positionCount)
+        //print("POSITION COUNT: ", positionCount)
         //print("TIME:", moveTime / 1000)
         //print("POSITION PER S: ", positionPerS)
         return bestMove

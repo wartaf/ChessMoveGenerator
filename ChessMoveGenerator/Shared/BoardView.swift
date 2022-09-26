@@ -1,6 +1,6 @@
 //
 //  DrawBoardView.swift
-//  ChessMoveGenerator
+//  Chess
 //
 //  Created by Harry Pantaleon on 9/7/22.
 //

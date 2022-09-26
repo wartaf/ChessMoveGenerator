@@ -56,7 +56,7 @@ extension ChessMoveGenerator {
     }
     
     func clear() {
-        board = Array<ChessPiece?>(repeating: nil, count: 144)
+        board = Array<ChessPiece?>(repeating: nil, count: 128)
         kingsPosition = [.white: -1, .black: -1]
         activeColor = .white;
         castlingRights = [.white: 0, .black: 0]
