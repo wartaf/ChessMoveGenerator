@@ -88,7 +88,6 @@
 				4FD3C8CF28C8BF3A004C6715 /* BoardView.swift */,
 				4FC8FB0828D4AE45009A796D /* Protocols.swift */,
 				4FCD14B228A89E6900E9C4C3 /* ChessAI */,
-				4F9D95AE28A76EB2002085F2 /* ChessMoveGenerator */,
 				4F75340A289BF08000F764A6 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -116,13 +115,6 @@
 			children = (
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		4F9D95AE28A76EB2002085F2 /* ChessMoveGenerator */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ChessMoveGenerator;
 			sourceTree = "<group>";
 		};
 		4FCD14B228A89E6900E9C4C3 /* ChessAI */ = {
