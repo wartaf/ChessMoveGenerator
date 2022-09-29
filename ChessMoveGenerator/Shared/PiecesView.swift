@@ -94,10 +94,10 @@ struct PiecesView: View {
             loadFen(fen: newValue)
         })
         .onAppear{
-            let d1 = Date().timeIntervalSince1970
+            //let d1 = Date().timeIntervalSince1970
             loadFen(fen: fen)
-            let d2 = Date().timeIntervalSince1970
-            print("load speed: ", d2 - d1)
+            //let d2 = Date().timeIntervalSince1970
+            //print("load speed: ", d2 - d1)
         }
     }
     

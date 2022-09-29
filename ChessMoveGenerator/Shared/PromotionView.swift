@@ -62,7 +62,7 @@ struct PromotionView: View {
     func onTap(_ pieceType: String) {
         
         let piece: Chess.PieceType = .init(rawValue: pieceType) ?? .Queen
-        print(pieceType, piece, Chess.PieceType.init(rawValue: pieceType))
+        //print(pieceType, piece, Chess.PieceType.init(rawValue: pieceType))
         self.pieceSelected?(piece)
         promotionColor = ""
     }
