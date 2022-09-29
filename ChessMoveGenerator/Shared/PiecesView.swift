@@ -10,7 +10,7 @@ import Chess
 
 enum PiecesViewStatus {
     case drag(_ offsetFrom: Int, _ pieceType: Chess.ChessPiece? = nil)
-    case drop(_ offsetFrom: Int, _ offsetTo: Int, _ pieceType: Chess.ChessPiece? = nil)
+    case drop(_ offsetFrom: Int, _ offsetTo: Int, _ pieceType: Chess.ChessPiece? = nil, _ promotion: Chess.PieceType? = nil)
 }
 
 struct PiecesView: View {
@@ -30,6 +30,10 @@ struct PiecesView: View {
     @State private var currentPieceOffset: Int? = nil
     @State private var piecesOffset: [MyPiece?] = []
     @State private var isDragging = false
+    @State private var promotionColor = ""
+    
+    @State private var saveFromToPiece: (Int,Int,Chess.ChessPiece?)? = nil // just for temporary storage
+
     
     var body: some View {
         GeometryReader { g in
@@ -39,7 +43,7 @@ struct PiecesView: View {
                 ForEach(0..<piecesOffset.count, id: \.self){ i in
                     if let myPiece = piecesOffset[i]{
                         DrawPieceView(myPiece.piece) {o in
-                            onDropEvent(from: myPiece.offset, to: myPiece.offset + o, pieceType: myPiece.piece)
+                            onDropEvent(from: myPiece.offset, to: myPiece.offset + o, pieceType: myPiece.piece, promotion: nil)
                         }
                         .offset(offsetToXY(o: myPiece.offset, multiple:  w8))
                         .onTapGesture {
@@ -72,10 +76,18 @@ struct PiecesView: View {
                     .fill(.yellow)
                     .opacity(0.2)
                     .onTapGesture {
-                        onDropEvent(from: currentPiece?.offset ?? -1, to: i, pieceType: currentPiece?.piece) // NEED PIECE TYPE
+                        onDropEvent(from: currentPiece?.offset ?? -1, to: i, pieceType: currentPiece?.piece, promotion:  nil) // NEED PIECE TYPE
                     }
                     .offset(offsetToXY(o: i, multiple:  w8))
                     .frame(width: w8, height: w8)
+            }
+            
+            if promotionColor == "w" || promotionColor == "b" {
+                PromotionView (promotionColor: $promotionColor) { p in
+                    if let (from, to, piece) = saveFromToPiece {
+                        onDropEvent(from: from, to: to, pieceType: piece, promotion: p)
+                    }
+                }
             }
         }
         .onChange(of: fen, perform: { newValue in
@@ -97,13 +109,39 @@ struct PiecesView: View {
         currentPiece = MyPiece(piece: pieceType!, offset: from)
     }
     
-    func onDropEvent(from: Int, to: Int, pieceType: Chess.ChessPiece?) {
+    func onDropEvent(from: Int, to: Int, pieceType: Chess.ChessPiece?, promotion: Chess.PieceType?) {
         let to = Range(0...120).contains(to) ? to : from
-        print(to)
-        self.event?(.drop(from, to, pieceType))
+        
+        // promotion of pawn
+        if pieceType?.type == .Pawn && promotion == nil {
+            if highlightOffsets.contains(to) {
+                
+                //SAVE FROM, TO, PIECETYPE ARGS THEN CALL ONDROPEVENT AFTER SELECTION
+                saveFromToPiece = (from, to, pieceType)
+                
+                if pieceType?.color == .white && Range(0...7).contains(to) {
+                    //print("promotion.... white")
+                    promotionColor = "w"
+                    currentPiece = nil
+                    highlightOffsets = []
+                    return
+                } else if pieceType?.color == .black && Range(112...119).contains(to) {
+                    //print("promotion.... black")
+                    promotionColor = "b"
+                    currentPiece = nil
+                    highlightOffsets = []
+                    return
+                }
+            }
+        }
+        
+        self.event?(.drop(from, to, pieceType, promotion))
         currentPiece = nil
         highlightOffsets = []
+        
     }
+    
+
 
     func offsetToXY(o: Int, multiple: Double = 1.0) -> CGSize {
         let x = o % 16

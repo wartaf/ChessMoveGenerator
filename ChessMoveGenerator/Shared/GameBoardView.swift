@@ -12,9 +12,10 @@ struct GameBoardView: View {
     
    // @State private var isDrag = false
     @State private var highlightOffset: [Int] = []
-    @State private var fen = "k4n1n/6P1/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1"
+    //@State private var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    @State private var fen = "k4n1n/6P1/8/8/8/8/1p6/N1N4K b - - 0 1"
     @State private var gameOver = false
-    @State private var promotion = ""
+    //@State private var promotion = ""
     @State private var showPromotion = false
     
     let defaultPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -29,20 +30,14 @@ struct GameBoardView: View {
                     switch status {
                     case .drag(let from, let piece):
                         isDrag(from: from, piece: piece)
-                    case .drop(let from, let to, let piece):
-                        isDrop(from: from, to: to, piece: piece)
+                    case .drop(let from, let to, let piece, let promotion):
+                        isDrop(from: from, to: to, piece: piece, promotion: promotion)
                     }
                 }
                 .onAppear{
                     game.clear()
                     game.load(fen: fen)
                 }
-                
-                PromotionView(piece: $promotion){ p in
-                    //isDrop(from: <#T##Int#>, to: <#T##Int#>, piece: <#T##Chess.ChessPiece?#>)
-                    print(p)
-                }
-
                 
                 if gameOver {
                     Rectangle()
@@ -88,7 +83,7 @@ struct GameBoardView: View {
         moves.forEach { m in
             
             if m.pieceType.type == .Pawn && m.promotion != nil {
-                promotion = m.color?.rawValue ?? ""
+                //promotion = m.color?.rawValue ?? ""
             }
              
             offset.insert(m.moveTo)
@@ -96,7 +91,7 @@ struct GameBoardView: View {
         highlightOffset = Array(offset)
     }
     
-    func isDrop(from: Int, to: Int, piece: Chess.ChessPiece?) {
+    func isDrop(from: Int, to: Int, piece: Chess.ChessPiece?, promotion: Chess.PieceType?) {
         if game.gameOver() {
             print("gameover")
             gameOver = true
@@ -106,32 +101,22 @@ struct GameBoardView: View {
         let moves = game.generateMoves(SquareOffset: from)
         var move: Chess.Move? = nil
         
-        //ADD THIS PROMOTION PIECE SELECTION
-        /*
-        if piece?.type == .Pawn && promotion == "" {
-            if piece?.color == .white && game.getRank(to) == .rank8 {
-                promotion = "w"
-                print("white Promotion")
-                return
-            }
-            else if piece?.color == .black && game.getRank(to) == .rank1 {
-                promotion = "b"
-                print("black promotion")
-                return 
-            }
-        }
-        */
-        
         moves.forEach { m in
+            
+            //if promotion != nil && m.promotion == promotion
             if m.moveTo == to {
-                if promotion != "" && m.promotion == .init(rawValue: promotion) {
-                    move = m
+                if promotion != nil {
+                    if m.promotion == promotion {
+                        //print("prom", m.promotion, promotion)
+                        move = m
+                    }
                 } else {
+                    print("not")
                     move = m
                 }
             }
         }
-        promotion = ""
+        //promotion = ""
         
         if let m = move {
             game.makeMove(move: m)
@@ -140,7 +125,7 @@ struct GameBoardView: View {
         }
         
         fen = game.generateFen()
-        
+        /*
         if let aimove = ai.getBestMove(game: game) {
             game.makeMove(move: aimove)
             fen = game.generateFen()
@@ -149,6 +134,7 @@ struct GameBoardView: View {
         if game.gameOver() {
             gameOver = true
         }
+        */
     }
 }
 

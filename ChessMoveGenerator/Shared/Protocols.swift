@@ -10,6 +10,7 @@ import Foundation
 protocol Player {
     func newGame()
     func makeMove()
+    func getBoard() -> [Any?] // should return array of empty square and pieces
     func endGame()
 }
 
@@ -19,4 +20,10 @@ protocol ChessGame {
     func generateMove() -> [Any] // List Available Move
     func reset()
     func isGameOver() -> Bool // is it GameOver
+}
+
+protocol GameEngine {
+    func startGame()
+    func endGame()
+    func assignPlayer()
 }

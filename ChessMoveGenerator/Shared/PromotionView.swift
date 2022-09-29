@@ -6,15 +6,16 @@
 //
 
 import SwiftUI
+import Chess
 
 struct PromotionView: View {
-    @Binding var piece: String
-    public var pieceSelected: ((_ piece: String) -> ())? = nil
+    @Binding var promotionColor: String
+    public var pieceSelected: ((_ piece: Chess.PieceType) -> ())? = nil
     //let picker
     var body: some View {
-        if piece != "" {
+        if promotionColor == "w" || promotionColor == "b" {
             ZStack {
-                let c = String(piece)
+                let c = String(promotionColor)
                 Group {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(.white)
@@ -28,29 +29,25 @@ struct PromotionView: View {
                             .resizable()
                             .scaledToFit()
                             .onTapGesture {
-                                self.pieceSelected?("q")
-                                piece = ""
+                                onTap("Q")
                             }
                         Image(c + "r")
                             .resizable()
                             .scaledToFit()
                             .onTapGesture {
-                                self.pieceSelected?("r")
-                                piece = ""
+                                onTap("R")
                             }
                         Image(c + "b")
                             .resizable()
                             .scaledToFit()
                             .onTapGesture {
-                                self.pieceSelected?("b")
-                                piece = ""
+                                onTap("B")
                             }
                         Image(c + "n")
                             .resizable()
                             .scaledToFit()
                             .onTapGesture {
-                                self.pieceSelected?("n")
-                                piece = ""
+                                onTap("N")
                             }
                     }
                     .padding(8)
@@ -60,6 +57,14 @@ struct PromotionView: View {
 
             }
         }
+    }
+    
+    func onTap(_ pieceType: String) {
+        
+        let piece: Chess.PieceType = .init(rawValue: pieceType) ?? .Queen
+        print(pieceType, piece, Chess.PieceType.init(rawValue: pieceType))
+        self.pieceSelected?(piece)
+        promotionColor = ""
     }
 }
 
