@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F6C80AE28E84B83002AF508 /* Chess in Frameworks */ = {isa = PBXBuildFile; productRef = 4F6C80AD28E84B83002AF508 /* Chess */; };
 		4F753418289BF08000F764A6 /* ChessMoveGeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F753408289BF07F00F764A6 /* ChessMoveGeneratorApp.swift */; };
 		4F753419289BF08000F764A6 /* ChessMoveGeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F753408289BF07F00F764A6 /* ChessMoveGeneratorApp.swift */; };
 		4F75341A289BF08000F764A6 /* GameBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F753409289BF07F00F764A6 /* GameBoardView.swift */; };
@@ -15,7 +16,6 @@
 		4F75341D289BF08000F764A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F75340A289BF08000F764A6 /* Assets.xcassets */; };
 		4F950BB628B48E3D00E7A0BA /* PiecesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F950BB528B48E3D00E7A0BA /* PiecesView.swift */; };
 		4F950BB728B48E3D00E7A0BA /* PiecesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F950BB528B48E3D00E7A0BA /* PiecesView.swift */; };
-		4F99D3CB28E12E4C009A75D2 /* Chess in Frameworks */ = {isa = PBXBuildFile; productRef = 4F99D3CA28E12E4C009A75D2 /* Chess */; };
 		4F99DC2F28DB4C62001DF6DF /* PromotionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F99DC2E28DB4C62001DF6DF /* PromotionView.swift */; };
 		4F99DC3028DB4C62001DF6DF /* PromotionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F99DC2E28DB4C62001DF6DF /* PromotionView.swift */; };
 		4F9D95B328A7785F002085F2 /* ChessAI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9D95B228A7785F002085F2 /* ChessAI.swift */; };
@@ -38,7 +38,6 @@
 		4F753415289BF08000F764A6 /* ChessMoveGenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChessMoveGenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F753417289BF08000F764A6 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		4F950BB528B48E3D00E7A0BA /* PiecesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiecesView.swift; sourceTree = "<group>"; };
-		4F99D3C828E12C43009A75D2 /* Chess */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Chess; path = ../../../Chess; sourceTree = "<group>"; };
 		4F99DC2E28DB4C62001DF6DF /* PromotionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromotionView.swift; sourceTree = "<group>"; };
 		4F9D95B228A7785F002085F2 /* ChessAI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChessAI.swift; sourceTree = "<group>"; };
 		4FA32FF128D21D58001AFB89 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -52,7 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4F99D3CB28E12E4C009A75D2 /* Chess in Frameworks */,
+				4F6C80AE28E84B83002AF508 /* Chess in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,7 +78,6 @@
 		4F753407289BF07F00F764A6 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				4F99D3C828E12C43009A75D2 /* Chess */,
 				4F753408289BF07F00F764A6 /* ChessMoveGeneratorApp.swift */,
 				4FA32FF128D21D58001AFB89 /* ContentView.swift */,
 				4F753409289BF07F00F764A6 /* GameBoardView.swift */,
@@ -143,7 +141,7 @@
 			);
 			name = "ChessMoveGenerator (iOS)";
 			packageProductDependencies = (
-				4F99D3CA28E12E4C009A75D2 /* Chess */,
+				4F6C80AD28E84B83002AF508 /* Chess */,
 			);
 			productName = "ChessMoveGenerator (iOS)";
 			productReference = 4F75340F289BF08000F764A6 /* ChessMoveGenerator.app */;
@@ -193,6 +191,9 @@
 				Base,
 			);
 			mainGroup = 4F753402289BF07F00F764A6;
+			packageReferences = (
+				4F6C80AC28E84B83002AF508 /* XCRemoteSwiftPackageReference "Chess" */,
+			);
 			productRefGroup = 4F753410289BF08000F764A6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -516,9 +517,21 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		4F6C80AC28E84B83002AF508 /* XCRemoteSwiftPackageReference "Chess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/wartaf/Chess.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
-		4F99D3CA28E12E4C009A75D2 /* Chess */ = {
+		4F6C80AD28E84B83002AF508 /* Chess */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = 4F6C80AC28E84B83002AF508 /* XCRemoteSwiftPackageReference "Chess" */;
 			productName = Chess;
 		};
 /* End XCSwiftPackageProductDependency section */

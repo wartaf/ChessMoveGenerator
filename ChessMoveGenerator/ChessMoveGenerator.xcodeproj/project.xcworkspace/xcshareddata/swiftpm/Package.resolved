@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "chess",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/wartaf/Chess.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "7ba89cfbd5b22d81cca231ea6b75ecbfbce1062d"
+      }
+    }
+  ],
+  "version" : 2
+}
