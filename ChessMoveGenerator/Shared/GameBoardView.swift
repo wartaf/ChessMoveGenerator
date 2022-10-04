@@ -12,8 +12,8 @@ struct GameBoardView: View {
     
    // @State private var isDrag = false
     @State private var highlightOffset: [Int] = []
-    //@State private var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-    @State private var fen = "k4n1n/6P1/8/8/8/8/1p6/N1N4K b - - 0 1"
+    @State private var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+    //@State private var fen = "k4n1n/6P1/8/8/8/8/1p6/N1N4K b - - 0 1"
     @State private var gameOver = false
     //@State private var promotion = ""
     @State private var showPromotion = false
@@ -125,7 +125,7 @@ struct GameBoardView: View {
         }
         
         fen = game.generateFen()
-        /*
+        
         if let aimove = ai.getBestMove(game: game) {
             game.makeMove(move: aimove)
             fen = game.generateFen()
@@ -134,7 +134,7 @@ struct GameBoardView: View {
         if game.gameOver() {
             gameOver = true
         }
-        */
+        
     }
 }
 
