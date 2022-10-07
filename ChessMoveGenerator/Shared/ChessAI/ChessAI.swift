@@ -174,4 +174,9 @@ class ChessAI {
         //print("POSITION PER S: ", positionPerS)
         return bestMove
     }
+    
+    func getBestMove(fen: String) -> Chess.Move? {
+        let game = Chess(fen: fen)
+        return getBestMove(game: game)
+    }
 }

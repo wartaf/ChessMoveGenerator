@@ -21,55 +21,34 @@ struct GameBoardView: View {
     let defaultPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
     
     var game = Chess()
-    var ai = ChessAI()
-        
+    
+    
+    var chess = ChessGameEngine()
+    var p1 = ChessAIPlayer(), p2 = ChessAIPlayer()
+    var history = ChessHistory()
+    
     var body: some View {
-            ZStack {
-                BoardView()
-                PiecesView (fen: $fen, highlightOffsets: $highlightOffset) { status in
-                    switch status {
-                    case .drag(let from, let piece):
-                        isDrag(from: from, piece: piece)
-                    case .drop(let from, let to, let piece, let promotion):
-                        isDrop(from: from, to: to, piece: piece, promotion: promotion)
-                    }
+        ZStack {
+            BoardView()
+            PiecesView (fen: $fen, highlightOffsets: $highlightOffset) { status in
+                switch status {
+                case .drag(let from, let piece):
+                    isDrag(from: from, piece: piece)
+                case .drop(let from, let to, let piece, let promotion):
+                    isDrop(from: from, to: to, piece: piece, promotion: promotion)
                 }
-                .onAppear{
-                    game.clear()
-                    game.load(fen: fen)
-                }
-                
-                if gameOver {
-                    Rectangle()
-                        .fill(.white.opacity(0.1))
-                    Text("Game Over")
-                }
-                
-                
+            }
+            .onAppear{
+                game.clear()
+                game.load(fen: fen)
             }
             
-            /*
-            Button("AI"){
-                if let move = ai.getBestMove(game: game) {
-                    game.makeMove(move: move)
-                    fen = game.generateFen()
-                } else {
-                    gameOver = true
-                }
+            if gameOver {
+                Rectangle()
+                    .fill(.white.opacity(0.1))
+                Text("Game Over")
             }
-            .padding(10)
-            .border(.gray)
-
-            Button("reset"){
-                game.clear()
-                game.load(fen: defaultPosition)
-                fen = game.generateFen()
-                print(game.boardToASCII())
-            }
-            .padding(10)
-            .border(.gray)
-             */
-
+        }
     }
     
     func isDrag(from: Int, piece: Chess.ChessPiece?) {
@@ -101,18 +80,22 @@ struct GameBoardView: View {
         let moves = game.generateMoves(SquareOffset: from)
         var move: Chess.Move? = nil
         
-        moves.forEach { m in
-            
+        
+        let len = moves.count
+        for i in 0..<len {
+        //moves.forEach { m in
+            let m = moves[i]
             //if promotion != nil && m.promotion == promotion
             if m.moveTo == to {
                 if promotion != nil {
                     if m.promotion == promotion {
                         //print("prom", m.promotion, promotion)
                         move = m
+                        break
                     }
                 } else {
-                    print("not")
                     move = m
+                    break
                 }
             }
         }
@@ -126,11 +109,7 @@ struct GameBoardView: View {
         
         fen = game.generateFen()
         
-        if let aimove = ai.getBestMove(game: game) {
-            game.makeMove(move: aimove)
-            fen = game.generateFen()
-        }
-        
+
         if game.gameOver() {
             gameOver = true
         }

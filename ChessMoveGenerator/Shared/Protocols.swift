@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Chess
 
 enum GameStatus {
     case initialState, started, ended, success, failed, surrender
@@ -16,6 +17,25 @@ enum ChessColor {
 }
 enum ChessPiece {
     case King, Queen, Rook, Bishop, Knight, Pawn, none
+    
+    func toString() -> String{
+        switch self {
+        case .King:
+            return "K"
+        case .Queen:
+            return "Q"
+        case .Rook:
+            return "R"
+        case .Bishop:
+            return "B"
+        case .Knight:
+            return "N"
+        case .Pawn:
+            return "P"
+        case .none:
+            return ""
+        }
+    }
     
     static func from(string: String) -> ChessPiece {
         switch string {
@@ -37,10 +57,25 @@ enum ChessPiece {
     }
 }
 
+
 struct ChessMove: GameMoveStructure{
-    let from: Int
-    let to: Int
-    let promotion: ChessPiece = .none
+    
+    private var _from: String, _to: String //A1 - H8
+    public var from: String {
+        get { return _from }
+        set { _from = newValue }
+    }
+    public var to: String {
+        get { return _to }
+        set { _to = newValue }
+    }
+    
+    public let promotion: ChessPiece = .none
+    
+    init(from: String, to: String, promotion: ChessPiece = .none) {
+        self._from = from
+        self._to = to
+    }
 }
 
 protocol GameMoveStructure { }
@@ -54,14 +89,19 @@ protocol GameEngine {
     func endGame(by surrenderPlayer: Player?) -> GameStatus
 }
 
-protocol GamePlayer {
+protocol GamePlayer: Equatable {
     associatedtype Engine: GameEngine
-    associatedtype Player: GamePlayer
+    //associatedtype Player: GamePlayer
     associatedtype GameMove: GameMoveStructure
-    var ID: Int { get }
-    func setGame(game: Engine)
+    //var ID: Int { get }
+    
     func makeMove(move: GameMove) -> GameStatus
     func surrender() -> GameStatus
+    
+    // set by engine
+    func setGame(game: Engine)
+    
+    func notifier()
 }
 
 protocol GameHistory {
@@ -71,114 +111,7 @@ protocol GameHistory {
     func clearAll()
 }
 
-class ChessHistory: GameHistory {
-    typealias Player = ChessPlayer
-    typealias GameMove = ChessMove
-    
-    private var moves: [(ChessPlayer, ChessMove)] = []
-    
-    func pushMove(player: ChessPlayer, move: ChessMove) {
-        moves.append((player, move))
-    }
-    func clearAll() {
-        moves = []
-    }
-    func printAll(){
-        moves.forEach {
-            print("player\($0.ID) -> \($1.from) - \($1.to)")
-        }
-        
-    }
-}
 
-class ChessGameEngine: GameEngine {
-    typealias GameMove = ChessMove
-    typealias Player = ChessPlayer
-    
-    private var whitePlayer: Player?
-    private var blackPlayer: Player?
-    private var playerToMove: Player?
-    private var gameStatus: GameStatus = .initialState
-    private var gameHistory: ChessHistory?
-    
-    func setPlayer(player: Player, color: ChessColor) {
-        if color == .white {
-            whitePlayer = player
-            whitePlayer?.setGame(game: self)
-        } else if color == .black {
-            blackPlayer = player
-            blackPlayer?.setGame(game: self)
-        }
-    }
-    
-    func setGameHistory(_ history: ChessHistory) {
-        self.gameHistory = history
-    }
-    
-    func startGame() -> GameStatus {
-        if whitePlayer == nil || blackPlayer == nil {
-            print("ERROR: Not enough Player(s), Set a Player first!")
-            return .failed
-        }
-        //Set Starting Player to White
-        playerToMove = whitePlayer
-        gameStatus = .started
-        return .success
-    }
-    
-    func makeMove(player: Player, move: GameMove) -> GameStatus {
-        if let pm = playerToMove {
-            if pm != player {
-                print("ERROR: Opponents turn!")
-                return .failed
-            }
-            gameHistory?.pushMove(player: player, move: move)
-            
-            if pm == whitePlayer {
-                playerToMove = blackPlayer
-            } else {
-                playerToMove = whitePlayer
-            }
-            
-            return .success
-        } else {
-            return .failed
-        }
-    }
-    
-    func endGame(by surrenderPlayer: Player? = nil) -> GameStatus {
-        if surrenderPlayer != nil {
-            return .surrender
-        }
-        return .ended
-    }
-}
 
-class ChessPlayer: GamePlayer, Equatable {
-    typealias Player = ChessPlayer
-    typealias GameMove = ChessMove
-    typealias Engine = ChessGameEngine
-    
-    var ID: Int = 0
-    private unowned var game: Engine?
 
-    init (ID: Int){
-        self.ID = ID
-    }
-    
-    static func == (lhs: ChessPlayer, rhs: ChessPlayer) -> Bool {
-        return lhs.ID == rhs.ID
-    }
-    
-    func setGame(game: Engine) {
-        self.game = game
-    }
-    
-    func makeMove(move: GameMove) -> GameStatus {
-        return game?.makeMove(player: self, move: move) ?? .failed
-    }
-    
-    func surrender() -> GameStatus {
-        return game?.endGame(by: self) ?? .failed
-    }
-}
+
