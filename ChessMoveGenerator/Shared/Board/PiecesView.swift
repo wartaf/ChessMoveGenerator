@@ -9,8 +9,8 @@ import SwiftUI
 import Chess
 
 enum PiecesViewStatus {
-    case drag(_ offsetFrom: Int, _ pieceType: Chess.ChessPiece? = nil)
-    case drop(_ offsetFrom: Int, _ offsetTo: Int, _ pieceType: Chess.ChessPiece? = nil, _ promotion: Chess.PieceType? = nil)
+    case drag(_ offsetFrom: String, _ pieceType: Chess.ChessPiece? = nil)
+    case drop(_ offsetFrom: String, _ offsetTo: String, _ pieceType: Chess.ChessPiece? = nil, _ promotion: Chess.PieceType? = nil)
 }
 
 struct PiecesView: View {
@@ -34,7 +34,6 @@ struct PiecesView: View {
     
     @State private var saveFromToPiece: (Int,Int,Chess.ChessPiece?)? = nil // just for temporary storage
 
-    
     var body: some View {
         GeometryReader { g in
             let w = min(g.size.width, g.size.height)
@@ -105,7 +104,8 @@ struct PiecesView: View {
         if !highlightOffsets.isEmpty {
             highlightOffsets = []
         }
-        self.event?(.drag(from, pieceType))
+        let algerbraicFrom = algebraic(from)
+        self.event?(.drag(algerbraicFrom, pieceType))
         currentPiece = MyPiece(piece: pieceType!, offset: from)
     }
     
@@ -116,7 +116,7 @@ struct PiecesView: View {
         if pieceType?.type == .Pawn && promotion == nil {
             if highlightOffsets.contains(to) {
                 
-                //SAVE FROM, TO, PIECETYPE ARGS THEN CALL ONDROPEVENT AFTER SELECTION
+                //BACKUP (FROM, TO, PIECETYPE) ARGS THEN CALL ONDROPEVENT AFTER SELECTION
                 saveFromToPiece = (from, to, pieceType)
                 
                 if pieceType?.color == .white && Range(0...7).contains(to) {
@@ -134,15 +134,17 @@ struct PiecesView: View {
                 }
             }
         }
-        
-        self.event?(.drop(from, to, pieceType, promotion))
+        let algebraicFrom = algebraic(from), algebraicTo = algebraic(to)
+        self.event?(.drop(algebraicFrom,algebraicTo, pieceType, promotion))
         currentPiece = nil
         highlightOffsets = []
-        
     }
     
-
-
+    func algebraic(_ i: Int) -> String {
+        let fileLetter = Array("abcdefgh")
+        return "\(fileLetter[(i & 15)])\(8 - (i >> 4))"
+    }
+    
     func offsetToXY(o: Int, multiple: Double = 1.0) -> CGSize {
         let x = o % 16
         let y = o / 16
@@ -265,9 +267,9 @@ struct PiecesView: View {
 
         //animate/move similar piece w/ diff offset
         fromTo.forEach { (a,i) in
-            withAnimation{
+            //withAnimation{
                 piecesOffset[i]?.offset = a
-            }
+            //}
         }
 
         // place new added pieces (if there's new)
@@ -346,6 +348,7 @@ struct DrawPieceView: View {
         }
     }
 }
+
 
 struct PiecesView_Previews: PreviewProvider {
     static var previews: some View {

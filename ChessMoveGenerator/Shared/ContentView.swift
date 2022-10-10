@@ -9,9 +9,9 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-
-            VStack {
-                GameBoardView()
+        VStack {
+            //WelcomeScreen()
+            GameBoardView(engine: .init() ,player1: ChessAIPlayer(), player2: ChessAIPlayer())
         }
     }
 }

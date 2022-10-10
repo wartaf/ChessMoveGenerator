@@ -9,11 +9,21 @@ import Foundation
 import Chess
 
 enum GameStatus {
-    case initialState, started, ended, success, failed, surrender
+    case initialState, started, ended, success, failed, surrender, invalid
 }
 
 enum ChessColor {
     case white, black, none
+    
+    mutating func toggle(){
+        if self == .white {
+            self = .black
+        } else if self == .black {
+            self = .white
+        } else {
+            self = .none
+        }
+    }
 }
 enum ChessPiece {
     case King, Queen, Rook, Bishop, Knight, Pawn, none
@@ -84,6 +94,9 @@ protocol GameMoveStructure { }
 protocol GameEngine {
     associatedtype Player: GamePlayer
     associatedtype GameMove: GameMoveStructure
+    
+    var fen: String { get }
+    
     func startGame() -> GameStatus
     func makeMove(player: Player, move: GameMove) -> GameStatus
     func endGame(by surrenderPlayer: Player?) -> GameStatus
@@ -93,15 +106,13 @@ protocol GamePlayer: Equatable {
     associatedtype Engine: GameEngine
     //associatedtype Player: GamePlayer
     associatedtype GameMove: GameMoveStructure
-    //var ID: Int { get }
     
     func makeMove(move: GameMove) -> GameStatus
     func surrender() -> GameStatus
     
-    // set by engine
-    func setGame(game: Engine)
+    func setGame(game: Engine) // set game instance, by engine
     
-    func notifier()
+    func notifier(fen: String) // Notify Player if its their turn
 }
 
 protocol GameHistory {

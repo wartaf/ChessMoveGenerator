@@ -8,7 +8,7 @@
 import Foundation
 import Chess
 
-class ChessGameEngine: GameEngine {
+class ChessGameEngine: ObservableObject, GameEngine {
     typealias GameMove = ChessMove
     typealias Player = ChessPlayer
     
@@ -23,10 +23,7 @@ class ChessGameEngine: GameEngine {
     
     private var timer: Timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false, block: {_ in })
     
-
-    public var fen: String {
-        chess.generateFen()
-    }
+    @Published public var fen: String = ""
     
     func setPlayer(player: Player, color: ChessColor) {
         players[color] = player
@@ -42,16 +39,17 @@ class ChessGameEngine: GameEngine {
             print("ERROR: Not enough Player(s), Set a Player first!")
             return .failed
         }
+        fen = chess.defaultPosition
         //Set Starting Player to White
         colorToMove = .white
         gameStatus = .started
         
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: self.gameLoop)
-        return .success
+        return .started
     }
     
     func gameLoop(timer: Timer) {
-        players[colorToMove]?.notifier()
+        players[colorToMove]?.notifier(fen: fen)
     }
     
     func makeMove(player: Player, move: GameMove) -> GameStatus {
@@ -62,26 +60,40 @@ class ChessGameEngine: GameEngine {
         
         if players[colorToMove] != player { return .failed }
 
+        //convert promotion format from chess.PieceType => ChessPiece
         var chessPromomtion: Chess.PieceType?
-        
         if move.promotion == .none {
             chessPromomtion = nil
         } else {
-            // get RawValue
             let p1 = move.promotion.toString()
             chessPromomtion = Chess.PieceType.init(rawValue: p1)
         }
         
+        //Check if posible moves
+        let sq = chess.algebraicToOffset(pgn: move.from)
+        let posibleMoves = chess.generateMoves(SquareOffset: sq)
+        let len = posibleMoves.count
+        
+        if len == 0 { return .invalid }
+        
+        let inMoves = posibleMoves.contains {
+            let pFrom = chess.algebraic(i: $0.moveFrom)
+            let pTo = chess.algebraic(i: $0.moveTo)
+            return pFrom == move.from && pTo == move.to && $0.promotion == chessPromomtion
+        }
+        
+        if inMoves == false { return .invalid }
+
+        // Make Move after Checking
         chess.makeMove(from: move.from, to: move.to, promotion: chessPromomtion)
         
-        print(chess.boardToASCII())
+        //print(chess.boardToASCII())
+        colorToMove.toggle()
         
-        if colorToMove == .white {
-            colorToMove = .black
-        } else if colorToMove == .black {
-            colorToMove = .white
-        }
         gameHistory?.pushMove(player: player, move: move)
+        
+        fen = chess.generateFen()
+        //print(fen)
         
         return .success
     }
@@ -93,8 +105,23 @@ class ChessGameEngine: GameEngine {
         }
         return .ended
     }
+    
     func endGame() -> GameStatus {
         timer.invalidate()
         return .ended
+    }
+    
+}
+
+extension ChessGameEngine {
+    func getAvailableOffset(from: String) -> [Int] {
+        let fr = chess.algebraicToOffset(pgn: from)
+        let moves = chess.generateMoves(SquareOffset: fr)
+        
+        var offset: Set<Int> = [] // should be unique int
+        moves.forEach { m in
+            offset.insert(m.moveTo)
+        }
+        return Array(offset)
     }
 }

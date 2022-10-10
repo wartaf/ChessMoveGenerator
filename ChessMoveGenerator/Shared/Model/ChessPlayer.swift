@@ -39,6 +39,6 @@ class ChessPlayer: GamePlayer {
         return game?.endGame(by: self) ?? .failed
     }
     
-    func notifier() {
+    func notifier(fen: String) {
     }
 }
