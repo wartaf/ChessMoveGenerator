@@ -70,21 +70,14 @@ enum ChessPiece {
 
 struct ChessMove: GameMoveStructure{
     
-    private var _from: String, _to: String //A1 - H8
-    public var from: String {
-        get { return _from }
-        set { _from = newValue }
-    }
-    public var to: String {
-        get { return _to }
-        set { _to = newValue }
-    }
-    
-    public let promotion: ChessPiece = .none
+    public var from: String
+    public var to: String //A1 - H8
+    public var promotion: ChessPiece
     
     init(from: String, to: String, promotion: ChessPiece = .none) {
-        self._from = from
-        self._to = to
+        self.from = from
+        self.to = to
+        self.promotion = promotion
     }
 }
 

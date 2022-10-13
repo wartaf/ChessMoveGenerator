@@ -8,10 +8,32 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var showGameMenu = true
+    
+    private var engine: ChessGameEngine = ChessGameEngine()
+    @State private var p1: ChessPlayer = ChessPlayer()
+    @State private var p2: ChessPlayer = ChessPlayer()
+    
     var body: some View {
         VStack {
-            //WelcomeScreen()
-            GameBoardView(engine: .init() ,player1: ChessAIPlayer(), player2: ChessAIPlayer())
+            if showGameMenu {
+                GameMenuView{(w,b) in
+                    if w == true {
+                        p1 = ChessPlayer()
+                    } else {
+                        p1 = ChessAIPlayer()
+                    }
+                    
+                    if b == true {
+                        p2 = ChessPlayer()
+                    } else {
+                        p2 = ChessAIPlayer()
+                    }
+                    showGameMenu.toggle()
+                }
+            } else {
+                GameBoardView(engine: engine ,player1: p1, player2: p2)
+            }
         }
     }
 }

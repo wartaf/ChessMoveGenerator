@@ -11,7 +11,7 @@ import Chess
 
 struct GameBoardView: View {
     @State private var fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-        //@State private var fen = "k4n1n/6P1/8/8/8/8/1p6/N1N4K b - - 0 1"
+    //@State private var fen = "k4n1n/6P1/8/8/8/8/1p6/N1N4K b - - 0 1"
     @State private var highlightOffset: [Int] = []
     @State private var gameOver = false
     
@@ -41,6 +41,11 @@ struct GameBoardView: View {
                     }
                 }
                 .onChange(of: engine.fen, perform: { self.fen = $0 })
+                .onChange(of: engine.gameStatus, perform: { newValue in
+                    if newValue == .ended {
+                        gameOver = true
+                    }
+                })
                 .onAppear{
                     //chess.clear()
                     //chess.load(fen: fen)
@@ -52,8 +57,12 @@ struct GameBoardView: View {
                 
                 if gameOver {
                     Rectangle()
-                        .fill(.white.opacity(0.1))
+                        .fill(.black.opacity(0.1))
                     Text("Game Over")
+                        .foregroundColor(.white)
+                        .font(.largeTitle)
+                        .fontWeight(.heavy)
+                        .shadow(radius: 2)
                 }
             }
         }
@@ -71,12 +80,17 @@ struct GameBoardView: View {
             return
         }
         */
+        var prom: ChessPiece = .none
+        
+        if let promotion = promotion {
+            prom = ChessPiece.from(string: promotion.rawValue)
+        }
         
         if let color = piece?.color {
             if color == .white {
-                p1.makeMove(move: ChessPlayer.GameMove(from: from, to: to, promotion: .none))
+                p1.makeMove(move: ChessPlayer.GameMove(from: from, to: to, promotion: prom))
             } else if color == .black {
-                p2.makeMove(move: ChessPlayer.GameMove(from: from, to: to, promotion: .none))
+                p2.makeMove(move: ChessPlayer.GameMove(from: from, to: to, promotion: prom))
             }
         }
     }

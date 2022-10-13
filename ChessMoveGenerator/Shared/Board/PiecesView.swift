@@ -267,9 +267,9 @@ struct PiecesView: View {
 
         //animate/move similar piece w/ diff offset
         fromTo.forEach { (a,i) in
-            //withAnimation{
+            withAnimation{
                 piecesOffset[i]?.offset = a
-            //}
+            }
         }
 
         // place new added pieces (if there's new)

@@ -21,16 +21,24 @@ class ChessAIPlayer: ChessPlayer {
             let from = algebraic(i: bestMove.moveFrom)
             let to = algebraic(i: bestMove.moveTo)
             var promotion: ChessPiece = .none
+            
             if let prom = bestMove.promotion {
-                promotion = ChessPiece.from(string: prom.rawValue)
+                //print(prom.rawValue)
+                let val = prom.rawValue
+                promotion = ChessPiece.from(string: val)
             }
-            let move = ChessPlayer.GameMove(from: from, to: to, promotion: promotion)
+            
+            //print(bestMove.promotion, promotion)
+            
+            let move = GameMove(from: from, to: to, promotion: promotion)
+            //print(move)
+            
             self.makeMove(move: move)
+            
         }
     }
     
     override func makeMove(move: GameMove) -> GameStatus {
-        //print(self)
         return game?.makeMove(player: self, move: move) ?? .failed
     }
     

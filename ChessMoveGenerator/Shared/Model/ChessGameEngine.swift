@@ -14,7 +14,7 @@ class ChessGameEngine: ObservableObject, GameEngine {
     
     private var players: [ChessColor: Player] = [:]
     
-    private var gameStatus: GameStatus = .initialState
+    @Published public private(set) var gameStatus: GameStatus = .initialState
     private weak var gameHistory: ChessHistory?
     
     private var chess: Chess = Chess()
@@ -23,7 +23,7 @@ class ChessGameEngine: ObservableObject, GameEngine {
     
     private var timer: Timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false, block: {_ in })
     
-    @Published public var fen: String = ""
+    @Published public private(set) var fen: String = ""
     
     func setPlayer(player: Player, color: ChessColor) {
         players[color] = player
@@ -34,14 +34,25 @@ class ChessGameEngine: ObservableObject, GameEngine {
         self.gameHistory = history
     }
     
-    func startGame() -> GameStatus {
+    func startGame() -> GameStatus{
+        let fenString = chess.defaultPosition
+        return self.startGame(fenString: fenString)
+    }
+    
+    func startGame(fenString: String) -> GameStatus {
         if players[.white] == nil || players[.black] == nil {
             print("ERROR: Not enough Player(s), Set a Player first!")
             return .failed
         }
-        fen = chess.defaultPosition
+
+        chess.load(fen: fenString)
+
+        self.fen = chess.generateFen()
+
         //Set Starting Player to White
-        colorToMove = .white
+        colorToMove = (chess.activeColor == .white) ? .white : .black
+        //colorToMove = .white
+
         gameStatus = .started
         
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: self.gameLoop)
@@ -54,6 +65,7 @@ class ChessGameEngine: ObservableObject, GameEngine {
     
     func makeMove(player: Player, move: GameMove) -> GameStatus {
         if chess.gameOver() == true {
+            gameStatus = .ended
             print("GAME ENDED")
             return endGame()
         }
@@ -88,12 +100,12 @@ class ChessGameEngine: ObservableObject, GameEngine {
         chess.makeMove(from: move.from, to: move.to, promotion: chessPromomtion)
         
         //print(chess.boardToASCII())
-        colorToMove.toggle()
+        //colorToMove.toggle()
+        colorToMove = (chess.activeColor == .white) ? .white : .black
         
         gameHistory?.pushMove(player: player, move: move)
         
         fen = chess.generateFen()
-        //print(fen)
         
         return .success
     }
